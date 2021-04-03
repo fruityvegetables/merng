@@ -8,7 +8,6 @@ const {
 } = require("../../util/validators");
 const { SECRET_KEY } = require("../../config");
 const User = require("../../models/User");
-const { isDefinitionNode } = require("graphql");
 
 function generateToken(user) {
   return jwt.sign(
