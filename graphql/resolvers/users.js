@@ -27,19 +27,20 @@ module.exports = {
         most of the time args is the only one
         args in this case is registerInput from typeDefs.js
         parent will give you the input of the last step
+        context is third
         info has metadata info
         */
-    async login(_, { username, password }) {
-      const { errors, valid } = validateLoginInput(username, password);
+    async login(_, { email, password }) {
+      const { errors, valid } = validateLoginInput(email, password);
 
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ email });
 
       if (!user) {
-        errors.general = "User not found";
-        throw new UserInputError("User not found", { errors });
+        errors.general = "Wrong credentials";
+        throw new UserInputError("Wrong credentials", { errors });
       }
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
