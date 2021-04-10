@@ -1,5 +1,4 @@
 const { AuthenticationError, UserInputError } = require("apollo-server");
-const { argsToArgsConfig } = require("graphql/type/definition");
 
 const Post = require("../../models/Post");
 const checkAuth = require("../../util/check-auth");
@@ -30,9 +29,8 @@ module.exports = {
   Mutation: {
     async createPost(_, { body }, context) {
       const user = checkAuth(context);
-      console.log(user);
 
-      if (argsToArgsConfig.body.trim() === "") {
+      if (body.trim() === "") {
         throw new Error("Post body must not be empty");
       }
 
@@ -60,7 +58,7 @@ module.exports = {
           await post.delete();
           return "Post deleted successfully";
         } else {
-          throw new AuthenticatorError("Action not allowed");
+          throw new AuthenticationError("Action not allowed");
         }
       } catch (err) {
         throw new Error(err);
@@ -71,11 +69,11 @@ module.exports = {
 
       const post = await Post.findById(postId);
       if (post) {
-        if ((post, likes.find((like) => like.username === username))) {
-          // Post already liked, let's unlike it
-          post.likes = post.likes.filter((like) => like.username !== user);
+        if (post.likes.find((like) => like.username === username)) {
+          // Post already likes, unlike it
+          post.likes = post.likes.filter((like) => like.username !== username);
         } else {
-          // not liked, let's like it
+          // Not liked, like post
           post.likes.push({
             username,
             createdAt: new Date().toISOString(),
