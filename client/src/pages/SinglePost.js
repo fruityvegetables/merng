@@ -1,77 +1,100 @@
-// import React, { useContext } from "react";
-// import gql from "graphql-tag";
-// import { useQuery } from "@apollo/react-hooks";
-// import { Card, Grid } from "semantic-ui-react";
-// import moment from "moment";
-// import { AuthContext } from "../context/auth";
+import React, { useContext } from "react";
+import gql from "graphql-tag";
+import { useQuery } from "@apollo/react-hooks";
+import { Card, Grid, Image, Button, Icon, Label } from "semantic-ui-react";
+import moment from "moment";
+import { AuthContext } from "../context/auth";
 
-// import bacon22 from "../images/bacon22.jpg";
+import LikeButton from "../components/LikeButton";
+import DeleteButton from "../components/DeleteButton";
 
-// function SinglePost (props){
-//     const postId = props.match.params.postId;
-//     const { user } = useContext(AuthContext);
+import bacon22 from "../images/bacon22.jpg";
 
-//     console.log(postId);
+function SinglePost (props){
+    const postId = props.match.params.postId;
+    const { user } = useContext(AuthContext);
 
-//         const { data: {getPost}} = useQuery(FETCH_POST_QUERY, {
-//             variables: {
-//              postId
-//          }
-//      })
+    console.log(postId);
 
-//     let postMarkup;
-//     if(!getPost){
-//         //this is preferably where a loading spinner would go
-//         postMarkup = <p>Loading post...</p>
-//     } else {
-//         const { id, body, username, createdAt, comments, likes, likeCount, commentCount } = getPost;
+        const { data: {getPost} = {}} = useQuery(FETCH_POST_QUERY, {
+            variables: {
+             postId
+         }
+     });
 
-//         postMarkup = (
-//             <Grid>
-//                 <Grid.Row>
-//                     <Grid.Column width={2}>
-//                     <Image floated="right" size="small" src={bacon22} />
-//                     </Grid.Column>
-//                     <Grid.Column width={10}>
-//                     <Card fluid>
-//                         <Card.Content>
-//                             <Card.Header>{username}</Card.Header>
-//                             <Card.Meta>{moment(createdAt).fromNow()}</Card.Meta>
-//                             <Card.Description>{body}</Card.Description>
-//                         </Card.Content>
-//                         <hr/>
-//                         <Card.Content extra>
-//                             <LikeButton user={user} post= {{ id, likeCount, likes }}/>
-//                             <Button as="div" labelPosition="right" onClick={() => console.log("Comment on post")}>
-//                                 <Button basic color="blue">
-//                                     <Icon name="comments"/>
-//                                 </Button>
-//                                 <Label basic color="blue" pointing="left">
-//                                     {commentCount}
-//                                 </Label>
-//                             </Button>
-//                         </Card.Content>
-//                     </Card>
-//                     </Grid.Column>
-//                 </Grid.Row>
-//             </Grid>
-//         )
-//     }
-// }
+     function deletePostCallback(){
+         props.history.push('/');
+     }
 
-// const FETCH_POST_QUERY = gql `
-//     query($postId: ID!){
-//         getPost(postId: $postId){
-//             id body createdAt username likeCount
-//             likes{
-//                 username
-//             }
-//             commentCount
-//             comments{
-//                 id username createdAt body
-//             }
-//         }
-//     }
-// `
+    let postMarkup;
+    if(!getPost){
+        //this is preferably where a loading spinner would go
+        postMarkup = <p>Loading post...</p>
+    } else {
+        const { id, body, username, createdAt, comments, likes, likeCount, commentCount } = getPost;
 
-// export default SinglePost;
+        postMarkup = (
+            <Grid>
+                <Grid.Row>
+                    <Grid.Column width={2}>
+                    <Image floated="right" size="small" src={bacon22} />
+                    </Grid.Column>
+                    <Grid.Column width={10}>
+                    <Card fluid>
+                        <Card.Content>
+                            <Card.Header>{username}</Card.Header>
+                            <Card.Meta>{moment(createdAt).fromNow()}</Card.Meta>
+                            <Card.Description>{body}</Card.Description>
+                        </Card.Content>
+                        <hr/>
+                        <Card.Content extra>
+                            <LikeButton user={user} post= {{ id, likeCount, likes }}/>
+                            <Button as="div" labelPosition="right" onClick={() => console.log("Comment on post")}>
+                                <Button basic color="blue">
+                                    <Icon name="comments"/>
+                                </Button>
+                                <Label basic color="blue" pointing="left">
+                                    {commentCount}
+                                </Label>
+                            </Button>
+                            {user && user.username === username && (
+                                <DeleteButton postId={id} callback={deletePostCallback}/>
+                            )}
+                        </Card.Content>
+                    </Card>
+                    {comments.map((comment) => (
+                        <Card fluid key={comment.id}>
+                            <Card.Content>
+                                { user && user.username === comment.username && (
+                                    <DeleteButton postId={id} commentId={comment.id}/>
+                                )}
+                                <Card.Header>{comment.username}</Card.Header>
+                                <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
+                                <Card.Description>{comment.body}</Card.Description>
+                            </Card.Content>
+                        </Card>
+                    ))}
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        );
+    }
+    return postMarkup;
+}
+
+const FETCH_POST_QUERY = gql `
+    query($postId: ID!){
+        getPost(postId: $postId){
+            id body createdAt username likeCount
+            likes{
+                username
+            }
+            commentCount
+            comments{
+                id username createdAt body
+            }
+        }
+    }
+`
+
+export default SinglePost;
