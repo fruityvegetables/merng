@@ -5,7 +5,8 @@ import moment from "moment";
 import bacon22 from "../images/bacon22.jpg";
 import { AuthContext } from "../context/auth";
 import LikeButton from "./LikeButton";
-import likePost from "./LikeButton"
+import likePost from "./LikeButton";
+import DeleteButton from "./DeleteButton";
 
 function PostCard({
   post: { body, createdAt, id, username, likeCount, commentCount, likes },
@@ -45,11 +46,15 @@ function PostCard({
             {commentCount}
           </Label>
         </Button>
-        {user && user.username === username && (
-          <Button as="div" color="red" floated="right" onClick={() => console.log("Delete post")}>
+        {user && user.username === username && <DeleteButton postId={id}/> }
+
+        {/* 
+        ~~~~~~~~~old delete post button found on DeleteButton.js now~~~~~~~~~~~~~~~~
+                  <Button as="div" color="red" floated="right" onClick={() => console.log("Delete post")}>
             <Icon name="trash" style={{ margin: 0 }} /> 
           </Button>
-        )}
+        */}
+
       </Card.Content>
     </Card>
   );
