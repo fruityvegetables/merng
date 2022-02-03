@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
-import { Button, Card, Icon, Image, Label, Popup } from "semantic-ui-react";
+import { Button, Card, Icon, Image, Label } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import bacon22 from "../images/bacon22.jpg";
 import { AuthContext } from "../context/auth";
 import LikeButton from "./LikeButton";
 import DeleteButton from "./DeleteButton";
+
+import MyPopup from "../util/MyPopup";
 
 function PostCard({
   post: { body, createdAt, id, username, likeCount, commentCount, likes },
@@ -34,10 +36,8 @@ function PostCard({
           <Label basic color="teal" pointing="left">
             {likeCount}
           </Label> */}
-        <Popup content="Comment on post"
-        inverted
-        trigger={
-          <Button labelPosition="right" as={Link} to={`/posts/${id}`}>
+        <MyPopup content="Comment on post">
+        <Button labelPosition="right" as={Link} to={`/posts/${id}`}>
           <Button color="blue" basic>
             <Icon name="comments" />
           </Button>
@@ -45,8 +45,8 @@ function PostCard({
             {commentCount}
           </Label>
           </Button>
-        }
-        />
+
+        </MyPopup>
         {user && user.username === username && <DeleteButton postId={id}/> }
 
         {/* 
