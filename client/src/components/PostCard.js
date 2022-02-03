@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
-import { Button, Card, Icon, Image, Label } from "semantic-ui-react";
+import { Button, Card, Icon, Image, Label, Popup } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import bacon22 from "../images/bacon22.jpg";
 import { AuthContext } from "../context/auth";
 import LikeButton from "./LikeButton";
-import likePost from "./LikeButton";
 import DeleteButton from "./DeleteButton";
 
 function PostCard({
@@ -27,9 +26,7 @@ function PostCard({
 
         {/* NEW LIKE BUTTON */}
         <LikeButton user={user} post={{ id, likes, likeCount }}/>
-        <Button as="div" labelPosition="right" onClick={likePost}>
-        </Button>
-        
+
           {/* OLD WAY TO DISPLAY LIKE BUTTON*/}
           {/* <Button color="teal" basic>
             <Icon name="heart" />
@@ -37,15 +34,19 @@ function PostCard({
           <Label basic color="teal" pointing="left">
             {likeCount}
           </Label> */}
-
-        <Button labelPosition="right" as={Link} to={`/posts/${id}`}>
+        <Popup content="Comment on post"
+        inverted
+        trigger={
+          <Button labelPosition="right" as={Link} to={`/posts/${id}`}>
           <Button color="blue" basic>
             <Icon name="comments" />
           </Button>
           <Label basic color="blue" pointing="left">
             {commentCount}
           </Label>
-        </Button>
+          </Button>
+        }
+        />
         {user && user.username === username && <DeleteButton postId={id}/> }
 
         {/* 
